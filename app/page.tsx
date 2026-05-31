@@ -15,13 +15,9 @@ async function getCourses(): Promise<Course[]> {
       .select('*')
       .order('created_at', { ascending: true });
 
-    console.log('SUPABASE DATA:', data);
-    console.log('SUPABASE ERROR:', error);
-
     if (error) throw error;
     return data ?? [];
-  } catch (error) {
-    console.log('FETCH FAILED:', error);
+  } catch {
     return [];
   }
 }
@@ -59,22 +55,19 @@ export default async function DashboardPage() {
   return (
     <div className="flex min-h-screen bg-[#080808]">
       <Sidebar />
-
       <main className="flex-1 p-6 overflow-y-auto">
         <section className="mb-6">
           <HeroTile />
         </section>
-
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-          <div className="lg:col-span-2">
+          <section className="lg:col-span-2">
             <Suspense fallback={<SkeletonFallback />}>
               <CourseGrid courses={courses} />
             </Suspense>
-          </div>
-
-          <div className="lg:col-span-1">
+          </section>
+          <aside className="lg:col-span-1">
             <ActivityTile />
-          </div>
+          </aside>
         </div>
       </main>
     </div>

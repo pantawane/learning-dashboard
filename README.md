@@ -1,36 +1,59 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Learning Dashboard
 
-## Getting Started
+A futuristic student dashboard built with Next.js 16, Supabase, Framer Motion, and Tailwind CSS v4.
 
-First, run the development server:
+## Live Demo
+[Add your Vercel URL here after deployment]
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## Tech Stack
+- **Framework**: Next.js 16 (App Router)
+- **Database**: Supabase (PostgreSQL)
+- **Styling**: Tailwind CSS v4
+- **Animations**: Framer Motion
+- **Icons**: Lucide React
+- **Language**: TypeScript
+
+## Architecture Decisions
+
+### Server / Client Component Split
+- `app/page.tsx` is a **Server Component** — fetches course data directly from Supabase on the server so no API keys are exposed to the browser
+- `CourseGrid.tsx`, `Sidebar.tsx`, `CourseCard.tsx`, `HeroTile.tsx` are **Client Components** (`"use client"`) because they use Framer Motion hooks and browser interactions
+- `ActivityTile.tsx` is a Client Component using `useMemo` with a seeded random function to ensure consistent server/client rendering (avoiding hydration mismatches)
+
+### Supabase SSR Pattern
+Used `@supabase/ssr` instead of the standard `@supabase/supabase-js` client because it is designed specifically for server-side rendering and correctly handles cookies in the Next.js App Router context.
+
+### Animation Strategy — Zero Layout Shifts
+All Framer Motion animations exclusively use `transform` (via `scale`, `y`, `x`) and `opacity`. No layout-affecting properties (`width`, `height`, `top`, `left`) are animated directly, ensuring zero layout shifts and GPU-accelerated rendering throughout.
+
+### Key Animation Details
+- **Staggered entrance**: CourseGrid uses `staggerChildren: 0.12` so cards appear sequentially
+- **Spring physics**: All hover interactions use `type: "spring", stiffness: 300, damping: 20`
+- **layoutId**: Sidebar uses `layoutId="activeIndicator"` for smooth active item transitions
+- **Progress bar**: Animates from `0%` to actual value on mount using Framer Motion `animate`
+
+## Local Setup
+
+1. Clone the repo
+2. Copy `.env.example` to `.env.local` and fill in your Supabase credentials
+3. Run `npm install`
+4. Run `npm run dev`
+5. Open [http://localhost:3000](http://localhost:3000)
+
+## Database Setup
+
+Run this SQL in your Supabase SQL Editor:
+
+```sql
+create table courses (
+  id uuid default gen_random_uuid() primary key,
+  title text not null,
+  progress integer not null,
+  icon_name text not null,
+  created_at timestamp default now()
+);
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Environment Variables
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+See `.env.example` for required variables:
