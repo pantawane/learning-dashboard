@@ -8,54 +8,58 @@ import { Course } from '@/types';
 type CourseCardProps = Pick<Course, 'title' | 'progress' | 'icon_name'>;
 
 export default function CourseCard({ title, progress, icon_name }: CourseCardProps) {
-  // Get the icon component, fallback to Code2
-  const IconComponent = (Icons as any)[icon_name] || Icons.Code2;
-
-  // Clamp progress to [0, 100]
+  const IconComponent = (Icons as Record<string, any>)[icon_name] ?? Icons.Code2;
   const safeProgress = Math.min(Math.max(progress, 0), 100);
 
   return (
-    <motion.div
-      className="relative rounded-2xl p-5 bg-[#111111] border border-white/[0.06] overflow-hidden group"
-      style={{
-        backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' seed='2'/%3C/filter%3E%3Crect width='400' height='400' filter='url(%23noiseFilter)' opacity='0.02'/%3E%3C/svg%3E")`,
-        backgroundSize: '200px 200px'
-      }}
+    <motion.article
+      className="relative rounded-2xl p-5 bg-[#111111] border border-white/[0.06] overflow-hidden cursor-default"
       whileHover={{
-        boxShadow: '0 0 20px rgba(6, 182, 212, 0.15)'
+        boxShadow: '0 0 20px rgba(6, 182, 212, 0.15)',
+        borderColor: 'rgba(6, 182, 212, 0.2)',
       }}
       transition={{ type: 'spring', stiffness: 300, damping: 24 }}
     >
-      {/* Icon */}
-      <div className="mb-4">
-        <IconComponent className="w-8 h-8 text-cyan-500" />
-      </div>
+      {/* Grain texture overlay */}
+      <div
+        className="absolute inset-0 opacity-[0.03] pointer-events-none"
+        style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' seed='2'/%3E%3Crect width='400' height='400' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
+          backgroundSize: '200px 200px',
+        }}
+      />
 
-      {/* Title */}
-      <h3 className="text-sm font-semibold text-white mb-4 line-clamp-2">
-        {title}
-      </h3>
+      {/* Content */}
+      <div className="relative z-10">
+        {/* Icon */}
+        <div className="mb-4 w-10 h-10 rounded-xl bg-cyan-500/10 flex items-center justify-center">
+          <IconComponent className="w-5 h-5 text-cyan-400" />
+        </div>
 
-      {/* Progress Label */}
-      <div className="text-xs text-white/60 mb-2">
-        {progress}%
-      </div>
+        {/* Title */}
+        <h3 className="text-sm font-semibold text-white mb-4 line-clamp-2 leading-relaxed">
+          {title}
+        </h3>
 
-      {/* Progress Bar */}
-      <div className="relative w-full h-2 rounded-full bg-[#1e1e1e] overflow-hidden">
-        <motion.div
-          className="h-full rounded-full"
-          style={{
-            backgroundImage: 'linear-gradient(90deg, #06b6d4 0%, #3b82f6 100%)'
-          }}
-          initial={{ width: '0%' }}
-          animate={{ width: `${safeProgress}%` }}
-          transition={{
-            duration: 1,
-            ease: 'easeOut'
-          }}
-        />
+        {/* Progress Label */}
+        <div className="flex items-center justify-between mb-2">
+          <span className="text-xs text-zinc-500">Progress</span>
+          <span className="text-xs font-medium text-cyan-400">{safeProgress}%</span>
+        </div>
+
+        {/* Progress Bar */}
+        <div className="relative w-full h-1.5 rounded-full bg-[#1e1e1e] overflow-hidden">
+          <motion.div
+            className="h-full rounded-full"
+            style={{
+              backgroundImage: 'linear-gradient(90deg, #06b6d4 0%, #3b82f6 100%)',
+            }}
+            initial={{ width: '0%' }}
+            animate={{ width: `${safeProgress}%` }}
+            transition={{ duration: 1, ease: 'easeOut' }}
+          />
+        </div>
       </div>
-    </motion.div>
+    </motion.article>
   );
 }

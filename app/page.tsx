@@ -15,9 +15,13 @@ async function getCourses(): Promise<Course[]> {
       .select('*')
       .order('created_at', { ascending: true });
 
+    console.log('SUPABASE DATA:', data);
+    console.log('SUPABASE ERROR:', error);
+
     if (error) throw error;
     return data ?? [];
   } catch (error) {
+    console.log('FETCH FAILED:', error);
     return [];
   }
 }
