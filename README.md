@@ -3,7 +3,7 @@
 A futuristic student dashboard built with Next.js 16, Supabase, Framer Motion, and Tailwind CSS v4.
 
 ## Live Demo
-[Add your Vercel URL here after deployment]
+https://learning-dashboard-lyart.vercel.app/
 
 ## Tech Stack
 - **Framework**: Next.js 16 (App Router)
@@ -52,6 +52,12 @@ create table courses (
   icon_name text not null,
   created_at timestamp default now()
 );
+
+## Security Note
+RLS (Row Level Security) is disabled on the `courses` table for this prototype.
+In production, a proper policy would be:
+```sql
+create policy "Allow public read" on courses for select using (true);
 ```
 
 ## Environment Variables

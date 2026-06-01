@@ -4,6 +4,9 @@ export interface Course {
   progress: number;
   icon_name: string;
   created_at: string;
+  description?: string;
+  lessons_count?: number;
+  duration?: string;
 }
 
 export interface NavItem {

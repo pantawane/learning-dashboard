@@ -59,6 +59,7 @@ export default function CourseGrid({ courses }: CourseGridProps) {
           }}
         >
           <CourseCard
+            id={course.id}   
             title={course.title}
             progress={course.progress}
             icon_name={course.icon_name}
