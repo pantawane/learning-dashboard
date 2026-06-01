@@ -17,6 +17,8 @@ export default function HeroTile() {
     );
   }, []);
 
+  const userName = process.env.NEXT_PUBLIC_USER_NAME ?? 'Vansh';
+
   return (
     <motion.div
       className="relative overflow-hidden rounded-2xl border border-white/5 bg-gradient-to-br from-[#0f0f0f] to-[#1a1a1a] p-8 md:p-12"
@@ -36,7 +38,7 @@ export default function HeroTile() {
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.5, delay: 0.1 }}
         >
-          Welcome back, Vansh 👋
+          Welcome back, {userName} 👋
         </motion.h1>
 
         {/* Date */}
