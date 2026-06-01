@@ -9,7 +9,7 @@ import {
   ChevronLeft,
   ChevronRight,
 } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface SidebarProps {
   activeItem?: string;
@@ -22,11 +22,6 @@ const navItems = [
   { id: 'progress', label: 'Progress', icon: TrendingUp },
   { id: 'settings', label: 'Settings', icon: Settings },
 ];
-
-const sidebarWidth = {
-  collapsed: 64,
-  expanded: 240,
-};
 
 const navContainerVariants = {
   hidden: {},
@@ -65,27 +60,29 @@ export default function Sidebar({
   return (
     <>
       {/* Desktop Sidebar */}
-      <motion.aside
-        className="hidden md:flex flex-col h-screen bg-[#0a0a0a] border-r border-gray-800 overflow-hidden flex-shrink-0"
-        animate={{
-          width: isCollapsed ? sidebarWidth.collapsed : sidebarWidth.expanded,
-          minWidth: isCollapsed ? sidebarWidth.collapsed : sidebarWidth.expanded,
+      <aside
+        className="hidden md:flex flex-col h-screen bg-[#0a0a0a] border-r border-gray-800 flex-shrink-0 overflow-hidden"
+        style={{
+          width: isCollapsed ? '64px' : '240px',
+          transition: 'width 0.0001ms', // instant — no layout animation
         }}
-        transition={{ type: 'spring', stiffness: 300, damping: 25 }}
       >
         {/* Toggle Button */}
-        <div className="flex items-center justify-end p-4">
-          <button
+        <div className="flex items-center justify-end p-4 flex-shrink-0">
+          <motion.button
             onClick={() => setIsCollapsed(!isCollapsed)}
             className="p-2 rounded-lg bg-[#1a1a1a] text-gray-400 hover:text-white hover:bg-gray-700 transition-colors"
             aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            transition={{ type: 'spring', stiffness: 300, damping: 20 }}
           >
             {isCollapsed ? (
               <ChevronRight className="w-5 h-5" />
             ) : (
               <ChevronLeft className="w-5 h-5" />
             )}
-          </button>
+          </motion.button>
         </div>
 
         {/* Navigation Items */}
@@ -105,7 +102,7 @@ export default function Sidebar({
                     : 'text-gray-400 hover:text-white'
                 }`}
               >
-                {/* Animated active background */}
+                {/* Animated active background using opacity only */}
                 {activeItem === id && (
                   <motion.div
                     layoutId="activeIndicator"
@@ -125,24 +122,34 @@ export default function Sidebar({
                   />
                 )}
 
-                <span className="relative z-10 flex items-center gap-3">
+                <span className="relative z-10 flex items-center gap-3 min-w-0">
+                  {/* Icon — always visible */}
                   <Icon className="w-5 h-5 flex-shrink-0" />
-                  {!isCollapsed && (
-                    <motion.span
-                      className="text-sm font-medium whitespace-nowrap"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ duration: 0.2 }}
-                    >
-                      {label}
-                    </motion.span>
-                  )}
+
+                  {/* Label — fades in/out using opacity + scale only */}
+                  <AnimatePresence initial={false}>
+                    {!isCollapsed && (
+                      <motion.span
+                        className="text-sm font-medium whitespace-nowrap overflow-hidden"
+                        initial={{ opacity: 0, x: -8 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -8 }}
+                        transition={{
+                          type: 'spring',
+                          stiffness: 300,
+                          damping: 25,
+                        }}
+                      >
+                        {label}
+                      </motion.span>
+                    )}
+                  </AnimatePresence>
                 </span>
               </button>
             </motion.div>
           ))}
         </motion.nav>
-      </motion.aside>
+      </aside>
 
       {/* Mobile Bottom Navigation */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-[#0a0a0a] border-t border-gray-800 flex items-center justify-around h-16">
