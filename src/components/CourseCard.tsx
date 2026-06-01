@@ -20,6 +20,27 @@ export default function CourseCard({ title, progress, icon_name }: CourseCardPro
       }}
       transition={{ type: 'spring', stiffness: 300, damping: 24 }}
     >
+      {/* Completion Badge */}
+      {safeProgress === 100 && (
+        <motion.div
+          className="absolute top-3 right-3 z-20 flex items-center gap-1 bg-emerald-500/20 border border-emerald-500/30 rounded-full px-2 py-0.5"
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ type: 'spring', stiffness: 400, damping: 20, delay: 0.5 }}
+        >
+          <svg
+            className="w-3 h-3 text-emerald-400"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={3}
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+          </svg>
+          <span className="text-[10px] font-semibold text-emerald-400">Done</span>
+        </motion.div>
+      )}
+
       {/* Grain texture overlay */}
       <div
         className="absolute inset-0 opacity-[0.03] pointer-events-none"
@@ -44,19 +65,30 @@ export default function CourseCard({ title, progress, icon_name }: CourseCardPro
         {/* Progress Label */}
         <div className="flex items-center justify-between mb-2">
           <span className="text-xs text-zinc-500">Progress</span>
-          <span className="text-xs font-medium text-cyan-400">{safeProgress}%</span>
+          <span
+            className={`text-xs font-medium ${
+              safeProgress === 100 ? 'text-emerald-400' : 'text-cyan-400'
+            }`}
+          >
+            {safeProgress}%
+          </span>
         </div>
 
         {/* Progress Bar */}
         <div className="relative w-full h-1.5 rounded-full bg-[#1e1e1e] overflow-hidden">
           <motion.div
-            className="h-full rounded-full"
+            className="absolute inset-y-0 left-0 rounded-full"
             style={{
-              backgroundImage: 'linear-gradient(90deg, #06b6d4 0%, #3b82f6 100%)',
+              transformOrigin: 'left center',
+              backgroundImage:
+                safeProgress === 100
+                  ? 'linear-gradient(90deg, #10b981 0%, #34d399 100%)'
+                  : 'linear-gradient(90deg, #06b6d4 0%, #3b82f6 100%)',
+              width: `${safeProgress}%`,
             }}
-            initial={{ width: '0%' }}
-            animate={{ width: `${safeProgress}%` }}
-            transition={{ duration: 1, ease: 'easeOut' }}
+            initial={{ scaleX: 0 }}
+            animate={{ scaleX: 1 }}
+            transition={{ duration: 1, ease: 'easeOut' as const }}
           />
         </div>
       </div>

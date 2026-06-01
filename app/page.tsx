@@ -2,10 +2,10 @@ import { Suspense } from 'react';
 import { createServerClient } from '@/lib/supabase';
 import { Course } from '@/types';
 import Sidebar from '@/components/Sidebar';
-import HeroTile from '@/components/HeroTile';
 import CourseGrid from '@/components/CourseGrid';
 import ActivityTile from '@/components/ActivityTile';
 import SkeletonCard from '@/components/SkeletonCard';
+import PageWrapper from '@/components/PageWrapper';
 
 async function getCourses(): Promise<Course[]> {
   try {
@@ -55,10 +55,7 @@ export default async function DashboardPage() {
   return (
     <div className="flex min-h-screen bg-[#080808]">
       <Sidebar />
-      <main className="flex-1 p-6 overflow-y-auto">
-        <section className="mb-6">
-          <HeroTile />
-        </section>
+      <PageWrapper courses={courses}>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
           <section className="lg:col-span-2">
             <Suspense fallback={<SkeletonFallback />}>
@@ -69,7 +66,7 @@ export default async function DashboardPage() {
             <ActivityTile />
           </aside>
         </div>
-      </main>
+      </PageWrapper>
     </div>
   );
 }
