@@ -52,10 +52,12 @@ create table courses (
   icon_name text not null,
   created_at timestamp default now()
 );
+```
 
 ## Security Note
 RLS (Row Level Security) is disabled on the `courses` table for this prototype.
 In production, a proper policy would be:
+
 ```sql
 create policy "Allow public read" on courses for select using (true);
 ```
@@ -63,3 +65,9 @@ create policy "Allow public read" on courses for select using (true);
 ## Environment Variables
 
 See `.env.example` for required variables:
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
+NEXT_PUBLIC_USER_NAME=
+```

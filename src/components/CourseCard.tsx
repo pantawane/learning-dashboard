@@ -3,13 +3,13 @@
 import React from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
 import { Course } from '@/types';
+import { getIcon } from '@/lib/iconMap';
 
 type CourseCardProps = Pick<Course, 'id' | 'title' | 'progress' | 'icon_name'>;
 
 export default function CourseCard({ id, title, progress, icon_name }: CourseCardProps) {
-  const IconComponent = (Icons as Record<string, any>)[icon_name] ?? Icons.Code2;
+  const IconComponent = getIcon(icon_name);
   const safeProgress = Math.min(Math.max(progress, 0), 100);
 
   return (
